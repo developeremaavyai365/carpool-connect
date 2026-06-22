@@ -243,22 +243,23 @@ const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
 
 async function startServer() {
-  if (isEmailConfigured()) {
-    const check = await verifyEmailConnection();
-    if (check.ok) {
-      console.log('Gmail notifications: enabled and verified');
-    } else {
-      console.warn('Gmail configured but connection failed:', check.reason);
-      console.warn('Users will not receive emails until GMAIL_APP_PASSWORD is correct.');
-    }
-  } else {
-    console.warn('Gmail notifications: disabled — set GMAIL_USER and GMAIL_APP_PASSWORD in backend/.env');
-  }
-
   server.listen(PORT, HOST, () => {
     startEmailQueueProcessor();
     if (useSupabase) {
       startRideInsertListener();
+    }
+    // Verify Gmail in background so it never blocks startup
+    if (isEmailConfigured()) {
+      verifyEmailConnection().then((check) => {
+        if (check.ok) {
+          console.log('Gmail notifications: enabled and verified');
+        } else {
+          console.warn('Gmail configured but connection failed:', check.reason);
+          console.warn('Users will not receive emails until GMAIL_APP_PASSWORD is correct.');
+        }
+      });
+    } else {
+      console.warn('Gmail notifications: disabled — set GMAIL_USER and GMAIL_APP_PASSWORD in backend/.env');
     }
     const access = getAccessInfo();
     console.log(`Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);

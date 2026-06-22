@@ -3,7 +3,7 @@ services:
     name: carpool-connect
     runtime: node
     plan: free
-    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
+    buildCommand: npm install --prefix backend && npm install --prefix frontend --include=dev && npm run build --prefix frontend
     startCommand: cd backend && NODE_ENV=production node src/server.js
     healthCheckPath: /api/health
     envVars:

@@ -1,0 +1,102 @@
+/**
+ * App-wide typography — Newsreader headings, Plus Jakarta UI body.
+ * Loaded last so it unifies styles across all pages and components.
+ */
+
+#root h1,
+#root h2,
+#root h3,
+#root h4,
+#root h5,
+#root h6,
+#root .card-title,
+#root .page-header h1,
+#root .page-hero h1,
+#root .section-header h2,
+#root .empty-state h3,
+#root .settings-card-heading,
+#root .publish-header h1,
+#root .publish-flow-title,
+#root .discover-headline,
+#root .discover-recent h2,
+#root .auth-header h1,
+#root .auth-visual h2,
+#root .browse-header h1,
+#root .rides-header h1,
+#root .rides-empty h1,
+#root .search-commutes-header h2,
+#root .commute-detail-driver h2,
+#root .route-planner-title,
+#root .location-picker-header h2,
+#root .map-picker-header h2,
+#root .modal-header h2,
+#root .employee-card-info h3,
+#root .profile-identity-text strong,
+#root .profile-completion-card h3,
+#root .profile-section h3,
+#root .request-person h3,
+#root .recommendations-header h2,
+#root .notification-content h4,
+#root .notification-feedback-panel h3,
+#root .notif-dropdown-header h3,
+#root .inbox-header h1,
+#root .publish-empty h3,
+#root .sidebar-brand,
+#root .topbar-brand,
+#root .toast-body strong {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-heading);
+  letter-spacing: var(--letter-heading);
+  line-height: 1.28;
+}
+
+/* Uppercase labels & meta — sans-serif, lighter */
+#root .badge,
+#root .settings-card-title,
+#root .profile-section-title,
+#root .profile-summary-label,
+#root .publish-flow-step-count,
+#root .publish-step-label,
+#root .commute-detail-label,
+#root .commute-detail-prefs h3,
+#root .commute-detail-notes h3,
+#root .search-card-label,
+#root .search-extra-filter label,
+#root .map-picker-eyebrow,
+#root .route-label,
+#root .publish-flow-route-label,
+#root .publish-pref-label {
+  font-family: var(--font);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+}
+
+/* Route / place names — medium sans, not heavy */
+#root .commute-card-place,
+#root .commute-card-driver,
+#root .publish-flow-route-value,
+#root .publish-flow-route-summary {
+  font-family: var(--font);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-ui);
+}
+
+#root .commute-card-price strong {
+  font-family: var(--font);
+  font-weight: var(--font-weight-semibold);
+}
+
+#root .btn {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-ui);
+}
+
+#root .sidebar-link,
+#root .mobile-nav-link {
+  font-weight: var(--font-weight-medium);
+}
+
+#root .sidebar-link.active,
+#root .mobile-nav-link.active {
+  font-weight: var(--font-weight-semibold);
+}

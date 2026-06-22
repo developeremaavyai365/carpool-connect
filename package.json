@@ -1,0 +1,29 @@
+{
+  "name": "carpool-connect",
+  "private": true,
+  "scripts": {
+    "build": "npm run build --prefix frontend && npm run build:rides --prefix backend",
+    "start": "npm run build && npm run start:prod --prefix backend",
+    "dev": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "start:public": "npm run build && npm run start:public --prefix backend",
+    "start:public:bg": "npm run start:public:bg --prefix backend",
+    "stop:public": "npm run stop:public --prefix backend",
+    "dev:cursor": "node scripts/dev-cursor.js",
+    "preview": "node scripts/open-cursor-preview.js",
+    "verify:live": "node scripts/verify-live.js",
+    "live:url": "node scripts/get-live-url.js",
+    "fix:tunnel": "node scripts/fix-tunnel.js",
+    "tunnel:status": "node scripts/tunnel-monitor.js",
+    "install:cloudflared": "winget install --id Cloudflare.cloudflared -e --accept-source-agreements --accept-package-agreements",
+    "test": "npm test --prefix backend",
+    "import:roster": "npm run import:roster --prefix backend",
+    "activate:supabase": "npm run activate:supabase --prefix backend",
+    "supabase:link": "npx supabase link --project-ref rejqxwtyisasykblbvyy",
+    "supabase:migration:new": "npx supabase migration new",
+    "supabase:db:push": "node scripts/supabase-db-push.js",
+    "supabase:push": "node scripts/supabase-db-push.js",
+    "supabase:update-urls": "node scripts/update-supabase-auth-urls.js",
+    "supabase:setup-auto-urls": "node scripts/setup-supabase-auto-urls.js"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "running": true,
+  "publicUrl": "https://plymouth-existing-irrigation-corn.trycloudflare.com",
+  "lanUrl": "http://192.168.1.44:3001",
+  "recommendedUrl": "https://plymouth-existing-irrigation-corn.trycloudflare.com",
+  "tunnelMode": "cloudflare",
+  "serverRestarts": 0,
+  "tunnelRestarts": 0,
+  "updatedAt": "2026-06-15T11:57:45.008Z",
+  "tunnelOk": true
+}

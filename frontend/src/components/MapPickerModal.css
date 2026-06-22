@@ -1,0 +1,213 @@
+.map-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  animation: map-picker-fade 0.2s ease;
+}
+
+@keyframes map-picker-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.map-picker-sheet {
+  width: 100%;
+  max-width: 560px;
+  max-height: 92vh;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  animation: map-picker-slide 0.28s ease;
+}
+
+@keyframes map-picker-slide {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@media (min-width: 640px) {
+  .map-picker-overlay {
+    align-items: center;
+    padding: 1.5rem;
+  }
+
+  .map-picker-sheet {
+    border-radius: var(--radius-xl);
+    max-height: 88vh;
+  }
+}
+
+.map-picker-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 0.75rem;
+}
+
+.map-picker-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  margin: 0 0 0.25rem;
+}
+
+.map-picker-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-heading);
+  letter-spacing: var(--letter-heading);
+  margin: 0 0 0.35rem;
+}
+
+.map-picker-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.map-picker-close {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.map-picker-close:hover {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.map-picker-map-wrap {
+  position: relative;
+  margin: 0 1.25rem;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  height: min(52vh, 340px);
+  min-height: 220px;
+}
+
+.map-picker-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.map-pick-marker {
+  background: none !important;
+  border: none !important;
+}
+
+.map-pick-marker span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+}
+
+.map-pick-marker-from span {
+  background: #22c55e;
+}
+
+.map-pick-marker-to span,
+.map-pick-marker-drop span {
+  background: #16a34a;
+}
+
+.map-picker-resolving {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.875rem;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
+
+.map-picker-preview {
+  padding: 1rem 1.5rem 0.5rem;
+}
+
+.map-picker-preview-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.map-picker-preview-text {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.map-picker-preview-empty {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.map-picker-error {
+  margin: 0 1.5rem;
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+}
+
+.map-picker-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.map-picker-actions .btn {
+  flex: 1;
+}
+
+@keyframes route-spin {
+  to { transform: rotate(360deg); }
+}
+
+.route-live-btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: route-spin 0.7s linear infinite;
+}

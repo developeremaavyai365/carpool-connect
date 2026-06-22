@@ -1,0 +1,25 @@
+node_modules/
+dist/
+.DS_Store
+*.db
+*.log
+.env
+.env.local
+.env.*.local
+.public-url
+backend/data/
+backend/dist/
+
+# Editor / tool dirs
+.agents/
+.claude/
+.cursor/
+.vscode/
+skills-lock.json
+
+# Windows scripts
+*.bat
+
+# Logs
+backend.log
+frontend.log

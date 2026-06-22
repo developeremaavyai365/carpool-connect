@@ -1,0 +1,17 @@
+{
+  "name": "CarPool Connect",
+  "short_name": "CarPool",
+  "description": "Carpool with riders and drivers across India — share rides and split costs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#22c55e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2322c55e' width='100' height='100' rx='20'/><text y='68' x='50' text-anchor='middle' font-size='48' fill='%230a0a0a'>🚗</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

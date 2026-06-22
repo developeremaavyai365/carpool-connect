@@ -1,0 +1,31 @@
+.ride-discovery-map {
+  width: 100%;
+  min-height: 320px;
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.ride-discovery-map-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+}
+
+.ride-discovery-map-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .ride-discovery-map,
+  .ride-discovery-map-canvas {
+    min-height: 240px;
+  }
+}

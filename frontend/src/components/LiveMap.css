@@ -1,0 +1,134 @@
+.live-map {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #1a1a1a;
+  z-index: 0;
+}
+
+.live-map-marker {
+  background: transparent;
+  border: none;
+}
+
+.live-map-marker-you span {
+  display: inline-block;
+  background: #22c55e;
+  color: #0a0a0a;
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-semibold);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.live-map-marker-colleague span {
+  display: block;
+  width: 14px;
+  height: 14px;
+  background: #4ade80;
+  border: 3px solid #141414;
+  border-radius: 50%;
+}
+
+.live-map-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.live-map-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.live-map-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.live-map-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #525252;
+}
+
+.live-map-status-dot.active {
+  background: #22c55e;
+}
+
+.live-map-frame {
+  height: 320px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.live-map-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.live-map-meta dt {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.live-map-meta dd {
+  margin-top: 0.125rem;
+  font-weight: 600;
+}
+
+.live-map-permission {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.live-map-permission p {
+  color: var(--color-text-muted);
+  margin: 0.75rem 0 1rem;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.live-location-page .page-header {
+  margin-bottom: 1rem;
+}
+
+.live-colleagues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.live-colleague-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.75rem;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .live-map-frame {
+    height: 260px;
+  }
+}

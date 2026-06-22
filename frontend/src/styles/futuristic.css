@@ -1,0 +1,52 @@
+/* Simple black + green UI — minimal effects */
+
+.glass-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.neon-text {
+  color: var(--color-primary);
+}
+
+.btn-primary {
+  background: var(--color-primary) !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: #0a0a0a !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-light) !important;
+  transform: none;
+}
+
+.card,
+.employee-card,
+.route-planner,
+.profile-sidebar,
+.profile-form-card,
+.auth-card {
+  background: var(--color-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.quick-action:hover {
+  border-color: var(--color-primary);
+  box-shadow: none;
+  transform: none;
+}
+
+.spinner {
+  border-top-color: var(--color-primary);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

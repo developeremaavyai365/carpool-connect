@@ -1,0 +1,256 @@
+.driver-dashboard {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-bottom: 2rem;
+}
+
+.driver-dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.driver-dashboard-header h1 {
+  margin: 0 0 0.35rem;
+}
+
+.driver-dashboard-header p {
+  margin: 0;
+  color: var(--color-text-muted, #94a3b8);
+}
+
+.driver-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.driver-stat {
+  padding: 1rem;
+  text-align: center;
+}
+
+.driver-stat strong {
+  display: block;
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+.driver-stat span {
+  color: var(--color-text-muted, #94a3b8);
+  font-size: 0.875rem;
+}
+
+.driver-section {
+  margin-bottom: 1.75rem;
+}
+
+.driver-section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.driver-section-head h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.driver-section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--color-primary-soft, rgba(16, 185, 129, 0.15));
+  color: var(--color-accent, #10b981);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.driver-section-desc {
+  margin: 0 0 0.75rem;
+  color: var(--color-text-muted, #94a3b8);
+  font-size: 0.875rem;
+}
+
+.driver-section-empty {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--color-surface-2, rgba(255, 255, 255, 0.04));
+  color: var(--color-text-muted, #94a3b8);
+  font-size: 0.875rem;
+}
+
+.driver-commute-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.driver-commute-row {
+  padding: 1rem;
+}
+
+.driver-commute-row-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.driver-route-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted, #94a3b8);
+}
+
+.driver-status-badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.driver-status-badge.status-active,
+.driver-status-badge.status-upcoming {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.driver-status-badge.status-completed {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.driver-status-badge.status-cancelled {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.driver-status-badge.status-in_progress {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.driver-commute-stats {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.75rem 0;
+  font-size: 0.8125rem;
+}
+
+.driver-commute-stats div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.driver-commute-stats dt {
+  margin: 0;
+  min-width: 3.5rem;
+  color: var(--color-text-muted, #94a3b8);
+}
+
+.driver-commute-stats dd {
+  margin: 0;
+}
+
+.driver-commute-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.driver-empty {
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.driver-empty h1,
+.driver-empty h2 {
+  margin-top: 0;
+}
+
+.driver-pending-requests {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+}
+
+.driver-pending-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.driver-pending-head h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.driver-pending-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.driver-pending-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.driver-pending-person {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.driver-pending-person p {
+  margin: 0.2rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.driver-pending-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.driver-pending-all-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .driver-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .driver-dashboard-header {
+    flex-direction: column;
+  }
+}

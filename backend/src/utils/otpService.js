@@ -35,13 +35,18 @@ async function sendOtpViaSupabase(normalized, purpose) {
   const shouldCreateUser = purpose === 'register' || purpose === 'reset';
   await sendEmailOtp(normalized, { shouldCreateUser });
 
-  await db.saveOtp({
-    identifier: normalized,
-    channel: 'email',
-    purpose,
-    code: SUPABASE_OTP_MARKER,
-    expires_at: new Date(Date.now() + OTP_EXPIRY_MS).toISOString(),
-  });
+  // saveOtp is non-critical — email already sent. Don't let a DB hiccup block the response.
+  try {
+    await db.saveOtp({
+      identifier: normalized,
+      channel: 'email',
+      purpose,
+      code: SUPABASE_OTP_MARKER,
+      expires_at: new Date(Date.now() + OTP_EXPIRY_MS).toISOString(),
+    });
+  } catch (e) {
+    console.warn('[OTP] saveOtp failed (email was still sent):', e.message);
+  }
 
   return {
     message: 'Verification code sent. Check your email inbox (and spam folder).',

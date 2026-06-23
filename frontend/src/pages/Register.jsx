@@ -66,17 +66,29 @@ export default function Register() {
 
   const requestOtp = async () => {
     const normalizedEmail = form.email.trim().toLowerCase();
-    const res = await authApi.sendOtp({
-      channel: 'email',
-      identifier: normalizedEmail,
-      purpose: 'register',
-    });
-    setEmailSent(Boolean(res.emailSent));
-    setDevOtp(res.devOtp || '');
-    setInfo(res.message);
-    setStep('verify');
-    setCountdown(60);
-    return res;
+    try {
+      const res = await authApi.sendOtp({
+        channel: 'email',
+        identifier: normalizedEmail,
+        purpose: 'register',
+      });
+      setEmailSent(Boolean(res.emailSent));
+      setDevOtp(res.devOtp || '');
+      setInfo(res.message);
+      setStep('verify');
+      setCountdown(60);
+      return res;
+    } catch (err) {
+      if (err.isTimeout) {
+        // Supabase likely sent the email before server timed out — advance to verify.
+        setEmailSent(true);
+        setInfo('Check your email — a verification code may have been sent. Enter it below.');
+        setStep('verify');
+        setCountdown(60);
+        return {};
+      }
+      throw err;
+    }
   };
 
   const sendOtp = async (e) => {

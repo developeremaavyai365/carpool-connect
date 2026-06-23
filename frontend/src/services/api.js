@@ -22,7 +22,23 @@ async function request(endpoint, options = {}) {
     ...options.headers,
   };
 
-  const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+  const timeoutMs = options.timeout ?? 25000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers, signal: controller.signal });
+  } catch (err) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      const timeoutErr = new ApiError('Request timed out. Please try again.', 0, {});
+      timeoutErr.isTimeout = true;
+      throw timeoutErr;
+    }
+    throw err;
+  }
+  clearTimeout(timer);
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {

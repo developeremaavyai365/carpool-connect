@@ -56,7 +56,18 @@ export default function ForgotPassword() {
       setCountdown(60);
       setOtp('');
     } catch (err) {
-      setError(err.message || 'Could not send reset code');
+      if (err.isTimeout) {
+        // Supabase likely sent the email before the server timed out.
+        // Advance to verify so the user can enter the code they received.
+        setEmail(normalized);
+        setEmailSent(true);
+        setInfo('Check your email — a verification code may have been sent. Enter it below.');
+        setStep('verify');
+        setCountdown(60);
+        setOtp('');
+      } else {
+        setError(err.message || 'Could not send reset code');
+      }
     } finally {
       setLoading(false);
     }

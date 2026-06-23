@@ -65,10 +65,6 @@ if (ridesRouter) {
 }
 
 app.get('/api/health', async (_req, res) => {
-  const emailStatus = isEmailConfigured()
-    ? await verifyEmailConnection()
-    : { ok: false, reason: 'Gmail credentials not configured' };
-
   const access = getAccessInfo();
   const emailQueue = await db.getEmailQueueStats();
 
@@ -90,8 +86,6 @@ app.get('/api/health', async (_req, res) => {
       authOtp: useSupabase ? 'supabase' : (isEmailConfigured() ? 'gmail' : 'dev'),
       notifications: isEmailConfigured() ? 'gmail' : 'none',
       configured: isEmailConfigured(),
-      connected: emailStatus.ok,
-      ...(emailStatus.reason && !emailStatus.ok && { detail: emailStatus.reason }),
     },
   });
 });

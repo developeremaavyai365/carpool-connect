@@ -127,34 +127,33 @@ async function sendOtpViaGmail(normalized, purpose) {
 }
 
 async function verifyOtpViaSupabase(normalized, code, purpose) {
-  const record = await db.findOtp(normalized, 'email', purpose);
-  if (!record || record.code !== SUPABASE_OTP_MARKER) {
-    return { valid: false, error: 'OTP expired or not found. Request a new code.' };
-  }
+  const record = await db.findOtp(normalized, 'email', purpose).catch(() => null);
 
-  if (new Date(record.expires_at) < new Date()) {
-    await db.deleteOtp(normalized, 'email', purpose);
-    return { valid: false, error: 'OTP has expired. Request a new code.' };
-  }
-
-  if (record.attempts >= MAX_ATTEMPTS) {
-    await db.deleteOtp(normalized, 'email', purpose);
-    return { valid: false, error: 'Too many failed attempts. Request a new code.' };
+  // Enforce rate limit and expiry only when we have a DB record (saveOtp may have failed).
+  if (record && record.code === SUPABASE_OTP_MARKER) {
+    if (new Date(record.expires_at) < new Date()) {
+      await db.deleteOtp(normalized, 'email', purpose).catch(() => {});
+      return { valid: false, error: 'OTP has expired. Request a new code.' };
+    }
+    if (record.attempts >= MAX_ATTEMPTS) {
+      await db.deleteOtp(normalized, 'email', purpose).catch(() => {});
+      return { valid: false, error: 'Too many failed attempts. Request a new code.' };
+    }
   }
 
   try {
     const session = await verifyEmailOtp(normalized, code);
-    await db.deleteOtp(normalized, 'email', purpose);
+    await db.deleteOtp(normalized, 'email', purpose).catch(() => {});
     return {
       valid: true,
       identifier: normalized,
       channel: 'email',
-      authUserId: session.user.id,
+      authUserId: session.user?.id,
       accessToken: session.access_token,
       provider: 'supabase',
     };
   } catch (err) {
-    await db.incrementOtpAttempts(normalized, 'email', purpose);
+    if (record) await db.incrementOtpAttempts(normalized, 'email', purpose).catch(() => {});
     return {
       valid: false,
       error: extractAuthErrorMessage(err),
@@ -241,11 +240,18 @@ async function sendOtp(channel, identifier, purpose) {
 async function verifyOtp(channel, identifier, code, purpose) {
   const normalized = normalizeIdentifier(channel, identifier);
 
-  if (channel === 'email') {
-    const record = await db.findOtp(normalized, 'email', purpose);
-    if (record?.code === SUPABASE_OTP_MARKER && isSupabaseConfigured()) {
-      return verifyOtpViaSupabase(normalized, code, purpose);
+  if (channel === 'email' && isSupabaseConfigured()) {
+    const record = await db.findOtp(normalized, 'email', purpose).catch(() => null);
+    // If DB has the Supabase marker — or saveOtp failed leaving no record — try Supabase first.
+    if (!record || record.code === SUPABASE_OTP_MARKER) {
+      const result = await verifyOtpViaSupabase(normalized, code, purpose);
+      if (result.valid) return result;
+      // Only fall through to local if Supabase definitively rejected the code.
     }
+    return verifyOtpLocally(normalized, code, channel, purpose);
+  }
+
+  if (channel === 'email') {
     return verifyOtpLocally(normalized, code, channel, purpose);
   }
 

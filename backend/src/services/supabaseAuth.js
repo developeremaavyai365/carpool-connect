@@ -66,6 +66,14 @@ async function updateAuthPassword(authId, password) {
   if (error) throw formatAuthError(error);
 }
 
+async function findAuthUserByEmail(email) {
+  const admin = getSupabaseAdmin();
+  const normalized = email.toLowerCase().trim();
+  const { data, error } = await admin.auth.admin.listUsers({ perPage: 1000 });
+  if (error || !data?.users) return null;
+  return data.users.find((u) => u.email?.toLowerCase() === normalized) || null;
+}
+
 async function verifyAccessToken(token) {
   const admin = getSupabaseAdmin();
   const { data, error } = await admin.auth.getUser(token);
@@ -119,6 +127,7 @@ module.exports = {
   signInWithPassword,
   createAuthUser,
   updateAuthPassword,
+  findAuthUserByEmail,
   verifyAccessToken,
   resolveEmployeeFromToken,
   sendEmailOtp,

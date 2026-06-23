@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../database');
 const { isSupabaseConfigured } = require('../lib/supabase');
 const {
-  signInWithPassword, createAuthUser, updateAuthPassword,
+  signInWithPassword, createAuthUser, updateAuthPassword, findAuthUserByEmail,
 } = require('../services/supabaseAuth');
 const { sanitizeEmployee, INDIAN_CITIES } = require('../utils/routeMatcher');
 const { normalizeEmail } = require('../utils/emailNormalize');
@@ -216,17 +216,17 @@ router.post('/register', registerValidation, asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const welcome = buildWelcomeEmail(name);
-  deliverEmailNow({
-    toEmail: email,
-    subject: welcome.subject,
-    html: welcome.html,
-    emailType: 'welcome',
-    userId: employee.id,
-    skipEligibility: true,
-  }).catch((err) => {
-    console.error(`Welcome email failed for ${email}:`, err.message);
-  });
+  if (process.env.GMAIL_USER) {
+    const welcome = buildWelcomeEmail(name);
+    deliverEmailNow({
+      toEmail: email,
+      subject: welcome.subject,
+      html: welcome.html,
+      emailType: 'welcome',
+      userId: employee.id,
+      skipEligibility: true,
+    }).catch(() => {});
+  }
 
   res.status(201).json(buildAuthResponse(employee, supabaseSession));
 }));
@@ -307,15 +307,24 @@ router.post('/reset-password', [
   }
 
   if (isSupabaseConfigured()) {
-    if (employee.auth_id) {
-      await updateAuthPassword(employee.auth_id, password);
+    // Resolve the Supabase auth ID — prefer the verified OTP session, then DB record,
+    // then look up by email to avoid a duplicate createUser (409) when shouldCreateUser
+    // already created the account during OTP send.
+    let authId = employee.auth_id || otpResult.authUserId || null;
+    if (!authId) {
+      const existing = await findAuthUserByEmail(email).catch(() => null);
+      authId = existing?.id || null;
+    }
+
+    if (authId) {
+      await updateAuthPassword(authId, password);
+      if (!employee.auth_id) {
+        await db.updateEmployee(employee.id, { auth_id: authId });
+      }
     } else {
-      const authUser = await createAuthUser({
-        email,
-        password,
-        name: employee.name,
-      });
-      await db.updateEmployee(employee.id, { auth_id: authUser.id });
+      const authUser = await createAuthUser({ email, password, name: employee.name });
+      authId = authUser.id;
+      await db.updateEmployee(employee.id, { auth_id: authId });
     }
     await db.updateEmployee(employee.id, { email_verified: true });
   } else {
@@ -327,17 +336,18 @@ router.post('/reset-password', [
 
   const updated = await db.findEmployeeById(employee.id);
 
-  const resetMail = buildPasswordResetSuccessEmail(updated.name);
-  deliverEmailNow({
-    toEmail: email,
-    subject: resetMail.subject,
-    html: resetMail.html,
-    emailType: 'password_reset',
-    userId: updated.id,
-    skipEligibility: true,
-  }).catch((err) => {
-    console.error(`Password reset confirmation email failed for ${email}:`, err.message);
-  });
+  // Fire-and-forget — Gmail is blocked on Render so this only works in local dev.
+  if (process.env.GMAIL_USER) {
+    const resetMail = buildPasswordResetSuccessEmail(updated.name);
+    deliverEmailNow({
+      toEmail: email,
+      subject: resetMail.subject,
+      html: resetMail.html,
+      emailType: 'password_reset',
+      userId: updated.id,
+      skipEligibility: true,
+    }).catch(() => {});
+  }
 
   let supabaseSession = null;
   if (isSupabaseConfigured()) {

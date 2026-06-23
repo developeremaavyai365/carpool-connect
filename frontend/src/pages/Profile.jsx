@@ -409,7 +409,7 @@ export default function Profile() {
               </label>
             </div>
 
-            <div className="profile-section-title">Vehicle (optional)</div>
+            <div className="profile-section-title">Vehicle</div>
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="vehicle-make">Make</label>

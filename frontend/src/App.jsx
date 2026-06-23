@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, Component } from 'react';
 
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
@@ -33,6 +33,34 @@ import BrowseCommutes from './pages/BrowseCommutes';
 import { resetUiAfterLogout } from './utils/resetUiState';
 
 
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    console.error('[ErrorBoundary]', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem', textAlign: 'center' }}>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginBottom: '1rem', opacity: 0.4 }}>
+            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <h2 style={{ marginBottom: '0.5rem' }}>Something went wrong</h2>
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>An unexpected error occurred. Please reload the page.</p>
+          <button className="btn btn-primary" onClick={() => window.location.reload()}>Reload</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function LoadingScreen() {
 
@@ -188,11 +216,15 @@ export default function App() {
 
   return (
 
-    <div key="app-shell">
+    <ErrorBoundary>
 
-      <AppRoutes />
+      <div key="app-shell">
 
-    </div>
+        <AppRoutes />
+
+      </div>
+
+    </ErrorBoundary>
 
   );
 

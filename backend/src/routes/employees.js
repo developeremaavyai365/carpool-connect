@@ -96,8 +96,15 @@ router.put('/profile', [
     const v = updates.vehicle;
     if (!v.make?.trim?.() && !v.model?.trim?.()) {
       updates.vehicle = null;
-    } else if (v.seats != null && v.seats !== '') {
-      updates.vehicle = { ...v, seats: parseInt(String(v.seats), 10) || v.seats };
+    } else {
+      const seats = v.seats != null && v.seats !== '' ? parseInt(String(v.seats), 10) : undefined;
+      updates.vehicle = {
+        make: (v.make || '').trim(),
+        model: (v.model || '').trim(),
+        color: (v.color || '').trim(),
+        plate: (v.plate || '').trim().toUpperCase(),
+        ...(seats >= 1 && seats <= 8 ? { seats } : {}),
+      };
     }
   }
 

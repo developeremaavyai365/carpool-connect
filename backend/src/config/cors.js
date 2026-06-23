@@ -33,7 +33,9 @@ function configuredOrigins() {
 }
 
 function isAllowedOrigin(origin) {
-  if (!origin) return true;
+  // In production, requests with no Origin header are only allowed from same-origin (SSR/server calls).
+  // Browser cross-origin requests always include Origin, so this rejects suspicious curl/bot requests.
+  if (!origin) return process.env.NODE_ENV !== 'production';
   if (process.env.CORS_ALLOW_ALL === 'true') return true;
 
   const normalized = origin.replace(/\/$/, '');

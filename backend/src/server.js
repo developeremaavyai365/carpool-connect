@@ -3,7 +3,23 @@ const http = require('http');
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
+
+// ── Startup env validation ────────────────────────────────────────────────────
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction) {
+  const jwtSecret = process.env.JWT_SECRET || '';
+  if (!jwtSecret || jwtSecret.includes('dev-secret') || jwtSecret.length < 32) {
+    console.error('[FATAL] JWT_SECRET is weak or missing. Set a strong random secret in production.');
+    process.exit(1);
+  }
+  if (process.env.OTP_DEV_MODE === 'true') {
+    console.error('[FATAL] OTP_DEV_MODE=true must not be set in production — OTP codes would leak in API responses.');
+    process.exit(1);
+  }
+}
 
 const db = require('./database');
 const { isSupabaseConfigured } = require('./lib/supabase');
@@ -37,11 +53,32 @@ if (!process.env.SKIP_DEMO_SEED) {
 
 const app = express();
 const server = http.createServer(app);
-const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction || process.env.TRUST_PROXY === 'true') {
   app.set('trust proxy', 1);
 }
+
+// ── Security headers ──────────────────────────────────────────────────────────
+app.use(helmet({
+  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: isProduction ? undefined : false,
+}));
+
+// ── Rate limiting ─────────────────────────────────────────────────────────────
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests from this IP, please try again after 15 minutes.' },
+});
+const otpLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many OTP requests, please wait 10 minutes.' },
+});
 
 const corsOpts = corsOptions();
 
@@ -106,7 +143,8 @@ if (ridesRouter) {
   });
 }
 
-app.use('/api/auth', authRoutes);
+app.use('/api/auth/otp', otpLimiter);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/notifications', notificationRoutes);

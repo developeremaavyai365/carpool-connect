@@ -349,6 +349,7 @@ export default function Profile() {
                 onChange={update('bio')}
                 placeholder="Tell fellow travelers a bit about yourself…"
                 maxLength={500}
+                aria-describedby="bio-count"
               />
             </div>
 
@@ -361,7 +362,7 @@ export default function Profile() {
                 value={form.travel_preferences || ''}
                 onChange={update('travel_preferences')}
                 placeholder="Music, AC, timing preferences…"
-                maxLength={500}
+                maxLength={300}
               />
             </div>
 

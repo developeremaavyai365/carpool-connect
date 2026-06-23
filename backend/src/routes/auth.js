@@ -276,7 +276,7 @@ router.post('/login', [
   if (!verifyPassword(password, employee.password_hash)) {
     return res.status(401).json({
       error: 'Invalid email or password',
-      hint: 'Wrong password. Use Forgot Password to reset via Gmail OTP.',
+      hint: 'Wrong password. Use Forgot Password to reset via email.',
     });
   }
 

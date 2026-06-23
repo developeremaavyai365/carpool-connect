@@ -197,7 +197,7 @@ async function demoteGmailSenderFromOwnerRole() {
 
 if (require.main === module) {
   ensureDemoUsers().then((count) => {
-    console.log(`Synced ${count} demo employees (password: ${DEMO_PASSWORD})`);
+    console.log(`Synced ${count} demo employees`);
   }).catch((err) => {
     console.error('Seed failed:', err.message);
     process.exit(1);

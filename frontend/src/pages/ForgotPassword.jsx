@@ -5,7 +5,6 @@ import { authApi } from '../services/api';
 import { loginFormDefaults, saveStoredAutofill } from '../utils/userAutofill';
 import OtpInput from '../components/OtpInput';
 import { ThemeToggleIcon } from '../components/ThemeToggle';
-import PlatformShowcase from '../components/PlatformShowcase';
 import './Auth.css';
 import '../components/OtpInput.css';
 
@@ -108,13 +107,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="auth-page">
-      <div className="auth-visual">
-        <h2>Reset your password</h2>
-        <p>We will send a verification code to your registered email address.</p>
-        <PlatformShowcase variant="auth" />
-      </div>
-
-      <div className="auth-form-side">
+<div className="auth-form-side">
         <div className="auth-theme-float">
           <ThemeToggleIcon />
         </div>

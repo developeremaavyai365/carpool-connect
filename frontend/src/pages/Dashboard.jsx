@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from '../context/LocationContext';
 import SearchCard from '../components/SearchCard';
-import PlatformShowcase from '../components/PlatformShowcase';
 import { useRouteLocations } from '../hooks/useRouteLocations';
 import { employeeApi, commuteApi } from '../services/api';
 import { filtersFromUser, saveSearchFilters } from '../utils/userAutofill';
@@ -109,9 +108,7 @@ export default function Dashboard() {
         </h1>
       </header>
 
-      <PlatformShowcase variant="default" />
-
-      {driverStats && driverStats.total > 0 && (
+{driverStats && driverStats.total > 0 && (
         <section className="discover-driver-overview card" aria-labelledby="driver-overview-title">
           <div className="discover-driver-overview-head">
             <h2 id="driver-overview-title">Your published commutes</h2>

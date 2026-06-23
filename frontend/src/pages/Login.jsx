@@ -8,8 +8,6 @@ import { loginFormDefaults, saveStoredAutofill } from '../utils/userAutofill';
 
 import { ThemeToggleIcon } from '../components/ThemeToggle';
 
-import PlatformShowcase from '../components/PlatformShowcase';
-
 import './Auth.css';
 
 
@@ -115,15 +113,6 @@ export default function Login() {
 
     <div className="auth-page">
 
-      <div className="auth-visual">
-
-        <h2>Share the ride.<br />Save the commute.</h2>
-
-        <p>Sign in with your email and password.</p>
-
-        <PlatformShowcase variant="auth" />
-
-      </div>
 
 
 

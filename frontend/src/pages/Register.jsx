@@ -5,7 +5,6 @@ import { authApi } from '../services/api';
 import { registerFormDefaults, saveStoredAutofill } from '../utils/userAutofill';
 import OtpInput from '../components/OtpInput';
 import { ThemeToggleIcon } from '../components/ThemeToggle';
-import PlatformShowcase from '../components/PlatformShowcase';
 import './Auth.css';
 import '../components/OtpInput.css';
 
@@ -145,13 +144,7 @@ export default function Register() {
 
   return (
     <div className="auth-page">
-      <div className="auth-visual">
-        <h2>Join the carpool community</h2>
-        <p>Register with your details and verify your email with a one-time code.</p>
-        <PlatformShowcase variant="auth" />
-      </div>
-
-      <div className="auth-form-side">
+<div className="auth-form-side">
         <div className="auth-theme-float">
           <ThemeToggleIcon />
         </div>

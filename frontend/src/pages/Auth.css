@@ -1,7 +1,9 @@
 .auth-page {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
 }
 
 .auth-visual {
@@ -58,7 +60,8 @@
   align-items: center;
   justify-content: center;
   padding: 2rem 1.5rem;
-  background: var(--color-bg);
+  width: 100%;
+  max-width: 480px;
   position: relative;
 }
 

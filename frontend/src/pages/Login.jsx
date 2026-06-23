@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -40,13 +40,19 @@ export default function Login() {
 
   const navigate = useNavigate();
 
+  const location = useLocation();
+
   const formRef = useRef(null);
 
-  const [email, setEmail] = useState(() => loginFormDefaults().email);
+  const locationHint = location.state?.hint || '';
+
+  const [email, setEmail] = useState(() => location.state?.email || loginFormDefaults().email);
 
   const [password, setPassword] = useState('');
 
   const [error, setError] = useState('');
+
+  const [info, setInfo] = useState(locationHint);
 
   const [loading, setLoading] = useState(false);
 
@@ -97,8 +103,13 @@ export default function Login() {
       navigate('/dashboard');
 
     } catch (err) {
+      if (err.data?.code === 'INCOMPLETE_REGISTRATION') {
+        // Supabase auth exists but no profile — send them to register to complete setup
+        navigate('/register', { state: { email: normalized, hint: 'Please complete your account registration.' } });
+        return;
+      }
       const hint = err.data?.hint;
-      setError(hint ? `${err.message} ${hint}` : (err.message || 'Invalid email or password'));
+      setError(hint ? `${err.message} — ${hint}` : (err.message || 'Invalid email or password.'));
     } finally {
 
       setLoading(false);
@@ -141,6 +152,8 @@ export default function Login() {
           </div>
 
 
+
+          {info && !error && <div className="alert alert-success">{info}</div>}
 
           {error && <div className="alert alert-error">{error}</div>}
 

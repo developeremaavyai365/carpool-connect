@@ -242,16 +242,12 @@ async function verifyOtp(channel, identifier, code, purpose) {
 
   if (channel === 'email' && isSupabaseConfigured()) {
     const record = await db.findOtp(normalized, 'email', purpose).catch(() => null);
-    // If DB has the Supabase marker — or saveOtp failed leaving no record — try Supabase first.
+    // If the DB has the Supabase marker OR saveOtp failed (no record at all),
+    // delegate entirely to Supabase — never fall through to local, because the
+    // stored code is '__supabase__' (not the real OTP) so local check always fails.
     if (!record || record.code === SUPABASE_OTP_MARKER) {
-      const result = await verifyOtpViaSupabase(normalized, code, purpose);
-      if (result.valid) return result;
-      // Only fall through to local if Supabase definitively rejected the code.
+      return verifyOtpViaSupabase(normalized, code, purpose);
     }
-    return verifyOtpLocally(normalized, code, channel, purpose);
-  }
-
-  if (channel === 'email') {
     return verifyOtpLocally(normalized, code, channel, purpose);
   }
 

@@ -75,8 +75,14 @@ router.post('/otp/send', [
     return res.status(400).json({ error: 'Valid 10-digit Indian mobile number required' });
   }
 
-  if (purpose === 'register' && channel === 'email' && (await db.findEmployeeByEmail(normalizedId))) {
-    return res.status(409).json({ error: 'Email already registered' });
+  if (purpose === 'register' && channel === 'email') {
+    const existing = await db.findEmployeeByEmail(normalizedId);
+    if (existing) {
+      return res.status(409).json({
+        error: 'An account with this email already exists. Please sign in instead.',
+        code: 'ALREADY_REGISTERED',
+      });
+    }
   }
 
   if (purpose === 'reset' && channel === 'email' && !(await db.findEmployeeByEmail(normalizedId))) {
@@ -166,7 +172,10 @@ router.post('/register', registerValidation, asyncHandler(async (req, res) => {
   }
 
   if (await db.findEmployeeByEmail(email)) {
-    return res.status(409).json({ error: 'Email already registered' });
+    return res.status(409).json({
+      error: 'An account with this email already exists. Please sign in instead.',
+      code: 'ALREADY_REGISTERED',
+    });
   }
   if (await db.findEmployeeByPhone(phone)) {
     return res.status(409).json({ error: 'Phone number already registered' });
@@ -243,22 +252,61 @@ router.post('/login', [
   const { email, password } = req.body;
 
   if (isSupabaseConfigured()) {
+    const employee = await db.findEmployeeByEmail(email);
+
+    // ── Path A: Supabase auth login ──────────────────────────────────────────
     try {
       const session = await signInWithPassword(email, password);
-      const employee = await db.findEmployeeByEmail(email);
+
       if (!employee) {
-        return res.status(401).json({
-          error: 'Invalid email or password',
-          hint: 'No account with this email. Register first.',
+        // Supabase auth succeeded but no profile row — registration was interrupted.
+        return res.status(404).json({
+          error: 'Your account setup was not completed. Please register again.',
+          code: 'INCOMPLETE_REGISTRATION',
         });
+      }
+
+      // Link auth_id if missing (e.g. account pre-dates Supabase)
+      if (!employee.auth_id && session.user?.id) {
+        await db.updateEmployee(employee.id, { auth_id: session.user.id }).catch(() => {});
       }
       await db.updateEmployee(employee.id, { email_verified: true });
       const updated = await db.findEmployeeById(employee.id);
       return res.json(buildAuthResponse(updated, session));
-    } catch (err) {
-      return res.status(err.status || 401).json({
-        error: err.message || 'Invalid email or password',
-        hint: 'Wrong password. Use Forgot Password to reset via email code.',
+
+    } catch (supabaseErr) {
+      // ── Path B: Legacy account (has password_hash but no Supabase auth) ───
+      if (employee?.password_hash && verifyPassword(password, employee.password_hash)) {
+        try {
+          // Migrate: create Supabase auth user and link it
+          let authUser = await findAuthUserByEmail(email).catch(() => null);
+          if (!authUser) {
+            authUser = await createAuthUser({ email, password, name: employee.name });
+          } else {
+            await updateAuthPassword(authUser.id, password);
+          }
+          const session = await signInWithPassword(email, password);
+          await db.updateEmployee(employee.id, { auth_id: authUser.id, email_verified: true });
+          const updated = await db.findEmployeeById(employee.id);
+          return res.json(buildAuthResponse(updated, session));
+        } catch {
+          // Migration failed — still let them in with JWT-only session
+          await db.updateEmployee(employee.id, { email_verified: true }).catch(() => {});
+          const updated = await db.findEmployeeById(employee.id);
+          return res.json(buildAuthResponse(updated));
+        }
+      }
+
+      // Neither Supabase nor local auth worked
+      if (!employee) {
+        return res.status(401).json({
+          error: 'No account found with this email.',
+          hint: 'Please register first.',
+        });
+      }
+      return res.status(401).json({
+        error: 'Incorrect password.',
+        hint: 'Use Forgot Password to reset via email.',
       });
     }
   }

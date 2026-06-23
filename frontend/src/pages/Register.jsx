@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../services/api';
 import { registerFormDefaults, saveStoredAutofill } from '../utils/userAutofill';
@@ -18,15 +18,19 @@ function readPasswordFields(formEl) {
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [step, setStep] = useState('details');
   const [otp, setOtp] = useState('');
   const [devOtp, setDevOtp] = useState('');
   const [emailSent, setEmailSent] = useState(false);
   const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
+  const [info, setInfo] = useState(location.state?.hint || '');
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const [form, setForm] = useState(() => registerFormDefaults());
+  const [form, setForm] = useState(() => {
+    const defaults = registerFormDefaults();
+    return location.state?.email ? { ...defaults, email: location.state.email } : defaults;
+  });
 
   useEffect(() => {
     saveStoredAutofill({
@@ -102,7 +106,12 @@ export default function Register() {
     try {
       await requestOtp();
     } catch (err) {
-      setError(err.message);
+      if (err.status === 409 || err.data?.code === 'ALREADY_REGISTERED') {
+        setError('');
+        navigate('/login', { state: { email: form.email.trim().toLowerCase(), hint: 'You already have an account. Sign in below.' } });
+        return;
+      }
+      setError(err.message || 'Could not send verification code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -115,7 +124,11 @@ export default function Register() {
     try {
       await requestOtp();
     } catch (err) {
-      setError(err.message);
+      if (err.status === 409 || err.data?.code === 'ALREADY_REGISTERED') {
+        navigate('/login', { state: { email: form.email.trim().toLowerCase(), hint: 'You already have an account. Sign in below.' } });
+        return;
+      }
+      setError(err.message || 'Could not resend code.');
     } finally {
       setLoading(false);
     }
@@ -136,7 +149,19 @@ export default function Register() {
       });
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || err.data?.errors?.[0]?.msg || 'Registration failed');
+      if (err.status === 409 || err.data?.code === 'ALREADY_REGISTERED') {
+        navigate('/login', { state: { email: form.email.trim().toLowerCase(), hint: 'You already have an account. Sign in below.' } });
+        return;
+      }
+      if (err.status === 401) {
+        // OTP rejected — show error + let them request a new code
+        setError((err.message || 'Verification code is invalid or expired.') + ' Please request a new code.');
+        setStep('verify');
+        setOtp('');
+        setCountdown(0);
+      } else {
+        setError(err.message || err.data?.errors?.[0]?.msg || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -160,7 +185,7 @@ export default function Register() {
           </div>
 
           {error && <div className="alert alert-error">{error}</div>}
-          {info && step === 'verify' && <div className="alert alert-success">{info}</div>}
+          {info && !error && <div className="alert alert-success">{info}</div>}
           {devOtp && step === 'verify' && !emailSent && (
             <div className="otp-dev-hint">Development code: <strong>{devOtp}</strong></div>
           )}

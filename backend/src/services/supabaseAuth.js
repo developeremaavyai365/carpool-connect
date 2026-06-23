@@ -14,15 +14,32 @@ function formatAuthError(error) {
 function extractAuthErrorMessage(error) {
   if (!error) return 'Authentication request failed';
 
-  const msg = typeof error.message === 'string' ? error.message.trim() : '';
-  if (msg && msg !== '{}') return msg;
+  const raw = typeof error.message === 'string' ? error.message.trim() : '';
 
-  if (error.status === 504 || error.name === 'AuthRetryableFetchError') {
-    return 'Supabase auth timed out. Check Email SMTP settings in Supabase, or try again in a minute.';
+  // Map Supabase's terse errors to human-friendly messages
+  if (/token.*expired|invalid.*token|otp.*expired|expired.*otp/i.test(raw)) {
+    return 'Verification code has expired or is invalid. Please request a new one.';
   }
+  if (/invalid.*credentials|invalid.*password|wrong.*password/i.test(raw)) {
+    return 'Incorrect email or password.';
+  }
+  if (/email.*rate.*limit|rate.*limit.*email|too many.*request/i.test(raw)) {
+    return 'Too many attempts. Please wait a few minutes and try again.';
+  }
+  if (/already.*registered|user.*already.*exists/i.test(raw)) {
+    return 'An account with this email already exists.';
+  }
+  if (/email.*not.*confirmed|not.*confirmed/i.test(raw)) {
+    return 'Email not confirmed. Please check your inbox for a verification code.';
+  }
+  if (error.status === 504 || error.name === 'AuthRetryableFetchError') {
+    return 'Request timed out. Please try again in a moment.';
+  }
+
+  if (raw && raw !== '{}') return raw;
   if (error.code) return String(error.code).replace(/_/g, ' ');
 
-  return 'Authentication request failed. Please try again.';
+  return 'Authentication failed. Please try again.';
 }
 
 async function signInWithPassword(email, password) {

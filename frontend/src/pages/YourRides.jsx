@@ -73,6 +73,10 @@ export default function YourRides() {
         {rides.map((ride) => {
           const isIncoming = ride.receiver_id === user?.id;
           const partner = isIncoming ? ride.sender_name : ride.receiver_name;
+          const v = ride.driver_vehicle;
+          const vehicleStr = v
+            ? [v.make, v.model, v.color, v.plate].filter(Boolean).join(' · ')
+            : null;
           return (
             <li key={ride.id} className="rides-card">
               <div className="rides-card-top">
@@ -83,13 +87,38 @@ export default function YourRides() {
                 </div>
                 <span className="badge badge-accepted">Confirmed</span>
               </div>
-              {ride.sender_route_from && (
+              {(ride.commute_route_from || ride.sender_route_from) && (
                 <p className="rides-card-route">
-                  {ride.sender_route_from} → {ride.sender_route_to}
+                  {ride.commute_route_from || ride.sender_route_from} → {ride.commute_route_to || ride.sender_route_to}
                 </p>
               )}
-              <time className="rides-card-time">
-                {new Date(ride.updated_at).toLocaleDateString('en-IN', { dateStyle: 'medium' })}
+              {ride.commute_departure_at && (
+                <time className="rides-card-time">
+                  Departure: {new Date(ride.commute_departure_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                </time>
+              )}
+              {!isIncoming && (ride.driver_phone || ride.driver_email || vehicleStr) && (
+                <div className="rides-card-contact">
+                  <p className="rides-card-contact-title">Driver contact details</p>
+                  {ride.driver_phone && (
+                    <a href={`tel:${ride.driver_phone}`} className="rides-card-contact-row">
+                      <span>📞</span><span>{ride.driver_phone}</span>
+                    </a>
+                  )}
+                  {ride.driver_email && (
+                    <a href={`mailto:${ride.driver_email}`} className="rides-card-contact-row">
+                      <span>📧</span><span>{ride.driver_email}</span>
+                    </a>
+                  )}
+                  {vehicleStr && (
+                    <div className="rides-card-contact-row">
+                      <span>🚗</span><span>{vehicleStr}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              <time className="rides-card-time" style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                Confirmed {new Date(ride.updated_at).toLocaleDateString('en-IN', { dateStyle: 'medium' })}
               </time>
             </li>
           );

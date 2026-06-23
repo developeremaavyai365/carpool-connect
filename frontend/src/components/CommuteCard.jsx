@@ -20,10 +20,15 @@ function RouteFlow({ from, stopovers = [], to }) {
   );
 }
 
-export default function CommuteCard({ commute, onSelect, compact = false, static: isStatic = false }) {
+export default function CommuteCard({ commute, onSelect, compact = false, static: isStatic = false, showDriverContact = false }) {
   const priceLabel = formatPrice(commute.price_per_seat);
   const stopovers = Array.isArray(commute.stopovers) ? commute.stopovers : [];
   const className = `commute-card ${compact ? 'compact' : ''} ${isStatic ? 'static' : ''}`;
+
+  const vehicle = commute.driver_vehicle;
+  const vehicleStr = vehicle
+    ? [vehicle.make, vehicle.model, vehicle.color, vehicle.plate].filter(Boolean).join(' · ')
+    : null;
 
   const content = (
     <>
@@ -50,6 +55,27 @@ export default function CommuteCard({ commute, onSelect, compact = false, static
           {commute.price_per_seat > 0 && <small>/ seat</small>}
         </div>
       </div>
+
+      {showDriverContact && (commute.driver_phone || commute.driver_email || vehicleStr) && (
+        <div className="commute-card-contact">
+          <p className="commute-card-contact-title">Driver contact details</p>
+          {commute.driver_phone && (
+            <a href={`tel:${commute.driver_phone}`} className="commute-card-contact-row">
+              <span>📞</span><span>{commute.driver_phone}</span>
+            </a>
+          )}
+          {commute.driver_email && (
+            <a href={`mailto:${commute.driver_email}`} className="commute-card-contact-row">
+              <span>📧</span><span>{commute.driver_email}</span>
+            </a>
+          )}
+          {vehicleStr && (
+            <div className="commute-card-contact-row">
+              <span>🚗</span><span>{vehicleStr}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="commute-card-tags">
         {commute.geospatial && commute.match_type && (

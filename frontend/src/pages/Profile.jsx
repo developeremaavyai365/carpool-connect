@@ -433,8 +433,20 @@ export default function Profile() {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="vehicle-color">Color</label>
-                <input id="vehicle-color" value={form.vehicle?.color || ''} onChange={updateVehicle('color')} />
+                <input id="vehicle-color" value={form.vehicle?.color || ''} onChange={updateVehicle('color')} placeholder="e.g. White" />
               </div>
+              <div className="form-group">
+                <label htmlFor="vehicle-plate">Number plate</label>
+                <input
+                  id="vehicle-plate"
+                  value={form.vehicle?.plate || ''}
+                  onChange={updateVehicle('plate')}
+                  placeholder="e.g. KA01AB1234"
+                  style={{ textTransform: 'uppercase' }}
+                />
+              </div>
+            </div>
+            <div className="form-row">
               <div className="form-group">
                 <label htmlFor="vehicle-seats">Seats</label>
                 <input

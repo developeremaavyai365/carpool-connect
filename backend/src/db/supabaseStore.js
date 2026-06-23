@@ -269,6 +269,10 @@ async function enrichRequest(request) {
     commute_route_from: commute?.route_from || null,
     commute_route_to: commute?.route_to || null,
     commute_departure_at: commute?.departure_at || null,
+    driver_name: commute?.driver_name || receiver?.name || null,
+    driver_phone: commute?.driver_phone || null,
+    driver_email: commute?.driver_email || null,
+    driver_vehicle: commute?.driver_vehicle || null,
   };
 }
 
@@ -357,6 +361,9 @@ async function rowToCommute(row) {
     id: row.id,
     driver_id: row.driver_id,
     driver_name: driver?.name || 'Unknown',
+    driver_email: driver?.email || null,
+    driver_phone: driver?.phone || null,
+    driver_vehicle: driver?.vehicle || null,
     driver_city: driver?.city || row.city || '',
     route_from: row.route_from,
     route_to: row.route_to,

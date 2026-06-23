@@ -170,9 +170,24 @@ router.patch('/:id/respond', [
   const io = req.app.get('io');
 
   const title = response === 'accepted' ? 'Request Accepted' : 'Request Declined';
-  const msg = response === 'accepted'
-    ? `${receiver.name} accepted your car pooling request.`
-    : `${receiver.name} declined your car pooling request.`;
+
+  let msg;
+  if (response === 'accepted') {
+    const v = receiver.vehicle;
+    const vehicleStr = v
+      ? [v.make, v.model, v.color, v.plate].filter(Boolean).join(' · ')
+      : null;
+    const lines = [
+      `${receiver.name} accepted your carpool request!`,
+      `Contact your driver:`,
+      `📞 ${receiver.phone}`,
+      `📧 ${receiver.email}`,
+    ];
+    if (vehicleStr) lines.push(`🚗 ${vehicleStr}`);
+    msg = lines.join('\n');
+  } else {
+    msg = `${receiver.name} declined your car pooling request.`;
+  }
 
   await createNotification(request.sender_id, 'carpool_response', title, msg, requestId, io);
 

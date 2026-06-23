@@ -113,4 +113,39 @@
 .rides-card-time {
   font-size: 0.75rem;
   color: var(--color-text-muted);
+  display: block;
+  margin-top: 0.375rem;
+}
+
+.rides-card-contact {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-accent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rides-card-contact-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin: 0 0 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rides-card-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.rides-card-contact-row:hover {
+  color: var(--color-accent);
 }

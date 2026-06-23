@@ -223,3 +223,35 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 }
+
+.commute-card-contact {
+  padding: 0.75rem;
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-accent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.commute-card-contact-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin: 0 0 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.commute-card-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.commute-card-contact-row:hover {
+  color: var(--color-accent);
+}

@@ -18,9 +18,10 @@ export function formStateFromUser(user) {
           make: vehicle.make || '',
           model: vehicle.model || '',
           color: vehicle.color || '',
+          plate: vehicle.plate || '',
           seats: vehicle.seats != null ? String(vehicle.seats) : '',
         }
-      : { make: '', model: '', color: '', seats: '' },
+      : { make: '', model: '', color: '', plate: '', seats: '' },
     email_notifications: user.email_notifications !== false,
   };
 }
@@ -38,6 +39,7 @@ export function buildProfilePayload(form) {
       make,
       model,
       color: (v.color || '').trim(),
+      plate: (v.plate || '').trim().toUpperCase(),
       ...(v.seats !== '' && v.seats != null
         ? { seats: parseInt(String(v.seats), 10) || undefined }
         : {}),
@@ -64,7 +66,7 @@ export function profileSummary(user) {
   if (!user) return {};
   const route = [user.route_from, user.route_to].filter(Boolean).join(' → ');
   const vehicle = user.vehicle?.make
-    ? [user.vehicle.make, user.vehicle.model].filter(Boolean).join(' ')
+    ? [user.vehicle.make, user.vehicle.model, user.vehicle.plate].filter(Boolean).join(' · ')
     : '';
   return {
     name: user.name || '',

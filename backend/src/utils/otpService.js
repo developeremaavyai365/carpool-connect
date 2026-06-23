@@ -31,7 +31,8 @@ async function enforceOtpRateLimit(normalized) {
 async function sendOtpViaSupabase(normalized, purpose) {
   await enforceOtpRateLimit(normalized);
 
-  const shouldCreateUser = purpose === 'register';
+  // For 'reset', also allow user creation so accounts not yet in Supabase Auth can still receive OTP.
+  const shouldCreateUser = purpose === 'register' || purpose === 'reset';
   await sendEmailOtp(normalized, { shouldCreateUser });
 
   await db.saveOtp({
